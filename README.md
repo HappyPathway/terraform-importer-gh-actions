@@ -1,2 +1,2 @@
-# terraform-gh_actions-import
-Terraform Workspace
+# terraform-importer-gh-actions
+Terraform Module

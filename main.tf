@@ -1,10 +1,8 @@
 data "github_repository" "public_repo" {
-  provider  = github.public_repo
   full_name = "${var.public_repo.owner}/${var.public_repo.name}"
 }
 
 data "github_ref" "ref" {
-  provider   = github.public_repo
   owner      = var.public_repo.owner
   repository = var.public_repo.name
   ref        = "heads/${data.github_repository.public_repo.default_branch != null ? data.github_repository.public_repo.default_branch : "main"}"

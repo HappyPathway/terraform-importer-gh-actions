@@ -4,7 +4,6 @@ module "internal_github_actions" {
   repo_org                = var.internal_repo.org
   name                    = var.internal_repo.name
   github_repo_topics      = var.github_repo_topics
-  )
   force_name        = true
   github_is_private = false
   create_codeowners = false

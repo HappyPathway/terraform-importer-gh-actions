@@ -31,9 +31,9 @@ variable "admin_teams" {
   default     = []
 }
 
-variable public_repo {
+variable "public_repo" {
   type = object({
     owner = string,
     name  = string
-  )}
+  })
 }

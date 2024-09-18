@@ -31,24 +31,15 @@ resource "local_file" "script" {
     public_default_branch   = var.public_repo.default_branch
     cur_dir                 = path.module
   })
-  depends_on = [data.github_repository.public_repo]
 }
 
 resource "null_resource" "git_import" {
-
-  triggers = {
-    sha = data.github_ref.ref.sha
-  }
 
   provisioner "local-exec" {
     command = local_file.script.filename
   }
 
   depends_on = [local_file.script]
-}
-
-output "public_repo" {
-  value = data.github_repository.public_repo
 }
 
 output "internal_repo" {

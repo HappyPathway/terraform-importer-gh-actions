@@ -1,30 +1,37 @@
-variable "internal_repo" {
-  description = "The internal GitHub repository to create"
-  type = object({
-    name          = string
-    org           = string
-    topics        = optional(list(string), [])
-    collaborators = optional(map(string), {})
-    admin_teams   = optional(list(string), [])
-  })
+variable "git_repo_url" {
+  description = "The URL of the Git repository to clone"
+  type        = string
 }
 
-variable "public_repo" {
-  description = "The public GitHub repository to import"
-  type = object({
-    owner = string
-    name  = string
-  })
+variable "git_repo_path" {
+  description = "The local path where the Git repository will be cloned"
+  type        = string
 }
 
-variable "github_org_teams" {
-  description = "The GitHub organization teams to add to the repository"
-  type        = list(any)
+variable "repo_org" {
+  description = "The GitHub organization for the repository"
+  type        = string
+}
+
+variable "repo_name" {
+  description = "The name of the GitHub repository"
+  type        = string
+}
+
+variable "repo_topics" {
+  description = "Additional topics to add to the GitHub repository"
+  type        = list(string)
   default     = []
 }
 
-variable "vulnerability_alerts" {
-  description = "Enable GitHub vulnerability alerts"
-  type        = bool
-  default     = true
+variable "collaborators" {
+  description = "List of collaborators to add to the GitHub repository"
+  type        = map(string)
+  default     = {}
+}
+
+variable "admin_teams" {
+  description = "List of admin teams for the GitHub repository"
+  type        = list(string)
+  default     = []
 }

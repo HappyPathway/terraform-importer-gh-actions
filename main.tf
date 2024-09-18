@@ -1,6 +1,6 @@
 module "internal_github_actions" {
   source                  = "HappyPathway/repo/github"
-  github_repo_description = data.github_repository.public_repo.description
+  github_repo_description = var.internal_repo.name
   repo_org                = var.internal_repo.org
   name                    = var.internal_repo.name
   github_repo_topics      = var.github_repo_topics

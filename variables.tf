@@ -28,3 +28,7 @@ variable "vulnerability_alerts" {
   type        = bool
   default     = true
 }
+
+variable github_repo_topics {
+  type = list(string)
+}

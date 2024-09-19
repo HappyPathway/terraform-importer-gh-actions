@@ -32,6 +32,7 @@ Terraform Workspace
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_force"></a> [force](#input\_force) | n/a | `bool` | `false` | no |
 | <a name="input_github_org_teams"></a> [github\_org\_teams](#input\_github\_org\_teams) | The GitHub organization teams to add to the repository | `list(any)` | `[]` | no |
 | <a name="input_github_repo_topics"></a> [github\_repo\_topics](#input\_github\_repo\_topics) | n/a | `list(string)` | n/a | yes |
 | <a name="input_internal_repo"></a> [internal\_repo](#input\_internal\_repo) | The internal GitHub repository to create | <pre>object({<br>    name          = string<br>    org           = string<br>    topics        = optional(list(string), [])<br>    collaborators = optional(map(string), {})<br>    admin_teams   = optional(list(string), [])<br>  })</pre> | n/a | yes |

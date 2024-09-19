@@ -33,7 +33,7 @@ variable "github_repo_topics" {
   type = list(string)
 }
 
-variable force {
+variable "force" {
   type    = bool
   default = false
 }

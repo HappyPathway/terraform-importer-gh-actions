@@ -16,8 +16,8 @@ jobs:
       github_username: ${{ github.actor }}
       github_email: ${{ github.actor }}@roknsound.com
       github_org: ${{ github.repository_owner }}
-      setup_terraform: false
-      terraform_init: false
+      setup_terraform: true
+      terraform_init: true
       cache: ${{ github.workspace }}
       download_cache: true
       commit_sha: ${{ needs.setup-terraform.outputs.commit_sha }}

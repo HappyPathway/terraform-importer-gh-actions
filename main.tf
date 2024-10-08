@@ -3,7 +3,7 @@ module "internal_github_actions" {
   github_repo_description = var.internal_repo.name
   repo_org                = var.internal_repo.org
   name                    = var.internal_repo.name
-  github_repo_topics      = var.github_repo_topics
+  github_repo_topics      = var.internal_repo.topics
   force_name              = true
   github_is_private       = false
   create_codeowners       = false

@@ -33,10 +33,8 @@ resource "null_resource" "git_import" {
   }
 
   provisioner "local-exec" {
-    command = ${path.module}/import.sh
+    command = "${path.module}/import.sh"
   }
-
-  depends_on = [local_file.script]
 }
 
 output "internal_repo" {

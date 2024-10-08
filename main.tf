@@ -15,9 +15,8 @@ module "internal_github_actions" {
   vulnerability_alerts = var.vulnerability_alerts
 }
 
-resource "local_file" "script" {
-  filename = "${path.module}/import.sh"
-  content = templatefile("${path.module}/script.tpl", {
+locals {
+  script = templatefile("${path.module}/script.tpl", {
     repo_path               = local.repo_path
     public_clone_url        = var.public_repo.clone_url
     internal_clone_url      = module.internal_github_actions.github_repo.ssh_clone_url
@@ -30,7 +29,11 @@ resource "local_file" "script" {
 resource "null_resource" "git_import" {
 
   provisioner "local-exec" {
-    command = local_file.script.filename
+    command = "echo ${local.script} > ${path.module}/import.sh"
+  }
+
+  provisioner "local-exec" {
+    command = ${path.module}/import.sh
   }
 
   depends_on = [local_file.script]

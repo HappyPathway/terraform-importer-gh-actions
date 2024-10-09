@@ -34,7 +34,7 @@ variable "github_repo_topics" {
 }
 
 variable source_default_branch {
-  defaul = "main"
+  default = "main"
   type   = string
 }
 

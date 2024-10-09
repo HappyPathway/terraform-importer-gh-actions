@@ -35,6 +35,10 @@ resource "null_resource" "git_import" {
   }
 
   provisioner "local-exec" {
+    command = "chmod +x ${path.module}/import.sh"
+  }
+
+  provisioner "local-exec" {
     command = "${path.module}/import.sh"
   }
 

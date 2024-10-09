@@ -13,6 +13,7 @@ module "internal_github_actions" {
   admin_teams          = var.internal_repo.admin_teams
   github_org_teams     = var.github_org_teams
   vulnerability_alerts = var.vulnerability_alerts
+  archive_on_destroy   = false
 }
 
 locals {

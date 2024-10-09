@@ -3,4 +3,4 @@ cd ${repo_path}
 git fetch
 git remote add internal ${internal_clone_url}
 git push internal --force --mirror
-rm -rf ${repo_path}
+

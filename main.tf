@@ -37,6 +37,10 @@ resource "null_resource" "git_import" {
   provisioner "local-exec" {
     command = "${path.module}/import.sh"
   }
+
+  depends_on = [
+    module.internal_github_actions
+  ]
 }
 
 output "internal_repo" {

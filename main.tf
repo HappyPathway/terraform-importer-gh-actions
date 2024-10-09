@@ -14,6 +14,7 @@ module "internal_github_actions" {
   github_org_teams     = var.github_org_teams
   vulnerability_alerts = var.vulnerability_alerts
   archive_on_destroy   = false
+  github_default_branch = var.source_default_branch
 }
 
 locals {

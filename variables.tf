@@ -33,6 +33,11 @@ variable "github_repo_topics" {
   type = list(string)
 }
 
+variable source_default_branch {
+  defaul = "main"
+  type   = "string"
+}
+
 variable "force" {
   type    = bool
   default = false

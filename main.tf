@@ -17,8 +17,9 @@ module "internal_github_actions" {
   github_default_branch = var.source_default_branch
 }
 
-locals {
-  script = templatefile("${path.module}/script.tpl", {
+resource "local_file" "script" {
+  filename = "${path.module}/import.sh"
+  content = templatefile("${path.module}/script.tpl", {
     repo_path               = local.repo_path
     public_clone_url        = var.public_repo.clone_url
     internal_clone_url      = module.internal_github_actions.github_repo.ssh_clone_url
@@ -31,20 +32,14 @@ locals {
 resource "null_resource" "git_import" {
 
   provisioner "local-exec" {
-    command = "echo ${local.script} > ${path.module}/import.sh"
+    command = local_file.script.filename
   }
 
-  provisioner "local-exec" {
-    command = "chmod +x ${path.module}/import.sh"
-  }
+  depends_on = [local_file.script]
+}
 
-  provisioner "local-exec" {
-    command = "${path.module}/import.sh"
-  }
-
-  depends_on = [
-    module.internal_github_actions
-  ]
+output "internal_repo" {
+  value = module.internal_github_actions.github_repo
 }
 
 output "internal_repo" {

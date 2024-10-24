@@ -28,10 +28,6 @@ locals {
   })
 }
 
-provider "github" {
-  alias = "public"
-}
-
 data "github_repository" "public_repo" {
   count = var.public_repo.name == null ? 0 : 1
   provider  = github.public

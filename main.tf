@@ -31,28 +31,13 @@ locals {
   })
 }
 
-data "github_repository" "public_repo" {
-  count     = var.public_repo.name == null ? 0 : 1
-  provider  = github.public
-  full_name = "${var.public_repo.org}/${var.public_repo.name}"
-}
-
-data "github_ref" "public_sha" {
-  count      = var.public_repo.name == null ? 0 : 1
-  provider   = github.public
-  owner      = var.public_repo.org
-  repository = var.public_repo.name
-  ref        = "heads/${data.github_repository.public_repo[0].default_branch}"
-}
-
-
 resource "terraform_data" "replacement" {
   input = module.internal_github_actions.github_repo.node_id
 }
 
 resource "null_resource" "git_import" {
   triggers = {
-    sha = var.public_repo.name == null ? timestamp() : data.github_ref.public_sha[0].sha
+    timestamp = timestamp()
   }
   provisioner "local-exec" {
     command = "echo '${local.script}' > ${path.module}/import.sh"

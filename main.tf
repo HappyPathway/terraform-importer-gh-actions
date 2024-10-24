@@ -28,10 +28,30 @@ locals {
   })
 }
 
-resource "null_resource" "git_import" {
+provider "github" {
+  alias = "public"
+}
 
+data "github_repository" "public_repo" {
+  count = var.public_repo.name == null ? 0 : 1
+  provider  = github.public
+  full_name = "${var.public_repo.org}/${var.public_repo.name}"
+}
+
+data "github_ref" "public_sha" {
+  count = var.public_repo.name == null ? 0 : 1
+  provider   = github.public
+  owner      = var.repo_org
+  repository = var.repo_name
+  ref        = "heads/${data.github_repository.public_repo[0].default_branch}"
+}
+
+resource "null_resource" "git_import" {
+  triggers = {
+    sha = var.public_repo.name == null ? timestamp() : data.github_ref.public_sha.sha
+  }
   provisioner "local-exec" {
-    command = "echo ${local.script} > ${path.module}/import.sh"
+    command = "echo '${local.script}' > ${path.module}/import.sh"
   }
 
   provisioner "local-exec" {
@@ -44,6 +64,10 @@ resource "null_resource" "git_import" {
 
   depends_on = [
     module.internal_github_actions
+  ]
+
+  replace_triggered_by = [
+    module.internal_github_actions.github_repository.repo
   ]
 }
 

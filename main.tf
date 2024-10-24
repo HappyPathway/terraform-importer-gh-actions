@@ -41,8 +41,8 @@ data "github_repository" "public_repo" {
 data "github_ref" "public_sha" {
   count = var.public_repo.name == null ? 0 : 1
   provider   = github.public
-  owner      = var.repo_org
-  repository = var.repo_name
+  owner      = var.public_repo.org
+  repository = var.public_repo.name
   ref        = "heads/${data.github_repository.public_repo[0].default_branch}"
 }
 

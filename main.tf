@@ -48,7 +48,7 @@ data "github_ref" "public_sha" {
 
 
 resource "terraform_data" "replacement" {
-  input = module.internal_github_actions.github_repository.repo.node_id
+  input = module.internal_github_actions.github_repo.node_id
 }
 
 resource "null_resource" "git_import" {

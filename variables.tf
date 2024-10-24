@@ -32,12 +32,13 @@ variable "vulnerability_alerts" {
 }
 
 variable "github_repo_topics" {
-  type = list(string)
+  type    = list(string)
+  default = []
 }
 
-variable source_default_branch {
+variable "source_default_branch" {
   default = "main"
-  type   = string
+  type    = string
 }
 
 variable "force" {

@@ -10,11 +10,14 @@ module "internal_github_actions" {
   enforce_prs             = false
   collaborators           = var.internal_repo.collaborators
   # yes, this is a bug, but it's a bug in the module, not the code
-  admin_teams          = var.internal_repo.admin_teams
-  github_org_teams     = var.github_org_teams
-  vulnerability_alerts = var.vulnerability_alerts
-  archive_on_destroy   = false
+  admin_teams           = var.internal_repo.admin_teams
+  github_org_teams      = var.github_org_teams
+  vulnerability_alerts  = var.vulnerability_alerts
+  archive_on_destroy    = false
   github_default_branch = var.source_default_branch
+  providers = {
+    github = github.internal
+  }
 }
 
 locals {
@@ -29,13 +32,13 @@ locals {
 }
 
 data "github_repository" "public_repo" {
-  count = var.public_repo.name == null ? 0 : 1
+  count     = var.public_repo.name == null ? 0 : 1
   provider  = github.public
   full_name = "${var.public_repo.org}/${var.public_repo.name}"
 }
 
 data "github_ref" "public_sha" {
-  count = var.public_repo.name == null ? 0 : 1
+  count      = var.public_repo.name == null ? 0 : 1
   provider   = github.public
   owner      = var.public_repo.org
   repository = var.public_repo.name

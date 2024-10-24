@@ -46,6 +46,11 @@ data "github_ref" "public_sha" {
   ref        = "heads/${data.github_repository.public_repo[0].default_branch}"
 }
 
+
+resource "terraform_data" "replacement" {
+  input = module.internal_github_actions.github_repository.repo.node_id
+}
+
 resource "null_resource" "git_import" {
   triggers = {
     sha = var.public_repo.name == null ? timestamp() : data.github_ref.public_sha[0].sha
@@ -67,9 +72,7 @@ resource "null_resource" "git_import" {
   ]
 
   lifecycle {
-    replace_triggered_by = [
-      module.internal_github_actions.github_repository.repo
-    ]
+    replace_triggered_by = [terraform_data.replacement]
   }
 }
 

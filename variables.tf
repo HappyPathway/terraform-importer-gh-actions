@@ -14,7 +14,7 @@ variable "public_repo" {
   type = object({
     clone_url      = string
     default_branch = string
-    name           = optional(string)
+    name           = optional(string, null)
     org            = optional(string)
   })
 }

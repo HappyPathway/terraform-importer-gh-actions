@@ -66,7 +66,7 @@ resource "null_resource" "git_import" {
     module.internal_github_actions
   ]
 
-  lifecylce {
+  lifecycle {
     replace_triggered_by = [
       module.internal_github_actions.github_repository.repo
     ]

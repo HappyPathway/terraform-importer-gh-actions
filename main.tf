@@ -48,7 +48,7 @@ data "github_ref" "public_sha" {
 
 resource "null_resource" "git_import" {
   triggers = {
-    sha = var.public_repo.name == null ? timestamp() : data.github_ref.public_sha.sha
+    sha = var.public_repo.name == null ? timestamp() : data.github_ref.public_sha[0].sha
   }
   provisioner "local-exec" {
     command = "echo '${local.script}' > ${path.module}/import.sh"

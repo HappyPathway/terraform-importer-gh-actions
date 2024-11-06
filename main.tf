@@ -33,9 +33,6 @@ resource "terraform_data" "replacement" {
 }
 
 resource "null_resource" "git_import" {
-  triggers = {
-    timestamp = timestamp()
-  }
   provisioner "local-exec" {
     command = "echo '${local.script}' > ${path.module}/import.sh"
   }

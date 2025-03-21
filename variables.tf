@@ -14,6 +14,7 @@ variable "public_repo" {
   type = object({
     name           = optional(string, null)
     org            = optional(string)
+    base_url       = optional(string, "https://github.com")
   })
 }
 

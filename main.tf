@@ -30,17 +30,23 @@ module "internal_github_actions" {
     length(data.github_repository.public_repo.topics) > 0 ? data.github_repository.public_repo.topics : []
     : []
   )
-  force_name        = true
-  github_is_private = false
-  create_codeowners = false
-  enforce_prs       = false
-  collaborators     = var.internal_repo.collaborators
-  admin_teams       = var.internal_repo.admin_teams
-  github_org_teams  = var.github_org_teams
+  force_name           = true
+  github_is_private    = false
+  create_codeowners    = false
+  enforce_prs         = false
+  collaborators       = var.internal_repo.collaborators
+  admin_teams        = var.internal_repo.admin_teams
+  github_org_teams   = var.github_org_teams
   providers = {
     github = github.internal_repo
   }
   vulnerability_alerts = var.vulnerability_alerts
+  archive_on_destroy  = false
+  github_default_branch = var.source_default_branch
+}
+
+resource "terraform_data" "replacement" {
+  input = module.internal_github_actions.github_repo.node_id
 }
 
 # Copy each file from source to destination
@@ -56,6 +62,10 @@ resource "github_repository_file" "sync_files" {
   commit_author      = "Terraform"
   commit_email       = "terraform@example.com"
   overwrite_on_create = true
+
+  lifecycle {
+    replace_triggered_by = [terraform_data.replacement]
+  }
 }
 
 # Get content of each file from source repository

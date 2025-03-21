@@ -12,8 +12,10 @@ variable "internal_repo" {
 variable "public_repo" {
   description = "The public GitHub repository to import"
   type = object({
-    owner = string
-    name  = string
+    clone_url      = string
+    default_branch = string
+    name           = optional(string, null)
+    org            = optional(string)
   })
 }
 
@@ -27,4 +29,19 @@ variable "vulnerability_alerts" {
   description = "Enable GitHub vulnerability alerts"
   type        = bool
   default     = true
+}
+
+variable "github_repo_topics" {
+  type    = list(string)
+  default = []
+}
+
+variable "source_default_branch" {
+  default = "main"
+  type    = string
+}
+
+variable "force" {
+  type    = bool
+  default = false
 }

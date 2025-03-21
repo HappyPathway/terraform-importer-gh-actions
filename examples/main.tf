@@ -27,24 +27,19 @@ provider "github" {
 module "repo_mirror" {
   source = "../"
   public_repo = {
-    owner = "HappyPathway"
-    name  = "terraform-importer-gh-actions"
+    org            = "HappyPathway"
+    name           = "terraform-importer-gh-actions"
+    clone_url      = "https://github.com/HappyPathway/terraform-importer-gh-actions.git"
+    default_branch = "main"
   }
   internal_repo = {
     name   = "terraform-import-gh-actions-internal"
     org    = "HappyPathway"
     topics = ["github-actions"]
   }
+  github_repo_topics = ["testing", "terraform"]
   providers = {
-    github.public_repo   = github.public_repo
-    github.internal_repo = github.internal_repo
+    github.public   = github.public_repo
+    github.internal = github.internal_repo
   }
-}
-
-output "public_repo" {
-  value = module.repo_mirror.public_repo
-}
-
-output "internal_repo" {
-  value = module.repo_mirror.internal_repo
 }

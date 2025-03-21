@@ -37,9 +37,6 @@ module "internal_github_actions" {
   collaborators       = var.internal_repo.collaborators
   admin_teams        = var.internal_repo.admin_teams
   github_org_teams   = var.github_org_teams
-  providers = {
-    github = github.internal_repo
-  }
   vulnerability_alerts = var.vulnerability_alerts
   archive_on_destroy  = false
   github_default_branch = var.source_default_branch
@@ -53,7 +50,6 @@ resource "terraform_data" "replacement" {
 
 # Copy each file from source to destination
 resource "github_repository_file" "sync_files" {
-  provider = github.internal_repo
   for_each = { for item in data.github_tree.source_tree.entries : item.path => item if item.type == "blob" }
 
   repository          = module.internal_github_actions.github_repo.name

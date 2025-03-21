@@ -1,11 +1,11 @@
 data "github_repository" "public_repo" {
   provider  = github.public_repo
-  full_name = "${var.public_repo.owner}/${var.public_repo.name}"
+  full_name = "${var.public_repo.org}/${var.public_repo.name}"
 }
 
 data "github_ref" "ref" {
   provider   = github.public_repo
-  owner      = var.public_repo.owner
+  owner      = var.public_repo.org
   repository = var.public_repo.name
   ref        = "heads/${data.github_repository.public_repo.default_branch != null ? data.github_repository.public_repo.default_branch : "main"}"
 }
@@ -58,7 +58,7 @@ resource "github_repository_file" "sync_files" {
   branch             = module.internal_github_actions.github_repo.default_branch
   file               = each.value.path
   content            = data.github_repository_file.source_files[each.key].content
-  commit_message     = "Sync from ${var.public_repo.owner}/${var.public_repo.name}"
+  commit_message     = "Sync from ${var.public_repo.org}/${var.public_repo.name}"
   commit_author      = "Terraform"
   commit_email       = "terraform@example.com"
   overwrite_on_create = true

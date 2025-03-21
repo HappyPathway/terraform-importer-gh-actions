@@ -7,7 +7,7 @@ data "github_ref" "ref" {
   provider   = github.public_repo
   owner      = var.public_repo.org
   repository = var.public_repo.name
-  ref        = "heads/${data.github_repository.public_repo.default_branch != null ? data.github_repository.public_repo.default_branch : "main"}"
+  ref        = "refs/heads/${data.github_repository.public_repo.default_branch != null ? data.github_repository.public_repo.default_branch : "main"}"
 }
 
 # Get all files from the source repository
@@ -15,7 +15,7 @@ data "github_tree" "source_tree" {
   provider   = github.public_repo
   repository = var.public_repo.name
   recursive  = true
-  tree_sha   = data.github_ref.ref.sha
+  tree_sha   = data.github_ref.ref.object.sha
 }
 
 module "internal_github_actions" {

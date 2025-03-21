@@ -131,8 +131,9 @@ For issues and feature requests, please open an issue in the repository.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_local"></a> [local](#provider\_local) | 2.5.2 |
-| <a name="provider_null"></a> [null](#provider\_null) | 3.2.3 |
+| <a name="provider_github.internal_repo"></a> [github.internal\_repo](#provider\_github.internal\_repo) | 6.6.0 |
+| <a name="provider_github.public_repo"></a> [github.public\_repo](#provider\_github.public\_repo) | 6.6.0 |
+| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 
 ## Modules
 
@@ -144,23 +145,29 @@ For issues and feature requests, please open an issue in the repository.
 
 | Name | Type |
 |------|------|
-| [local_file.script](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
-| [null_resource.git_import](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [github_repository_file.sync_files](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_file) | resource |
+| [terraform_data.replacement](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
+| [github_ref.ref](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/ref) | data source |
+| [github_repository.public_repo](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository) | data source |
+| [github_repository_file.source_files](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repository_file) | data source |
+| [github_tree.source_tree](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/tree) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_force"></a> [force](#input\_force) | n/a | `bool` | `false` | no |
-| <a name="input_github_org_teams"></a> [github\_org\_teams](#input\_github\_org_teams) | The GitHub organization teams to add to the repository | `list(any)` | `[]` | no |
-| <a name="input_github_repo_topics"></a> [github\_repo\_topics](#input\_github\_repo_topics) | n/a | `list(string)` | n/a | yes |
-| <a name="input_internal_repo"></a> [internal\_repo](#input\_internal_repo) | The internal GitHub repository to create | <pre>object({<br>    name          = string<br>    org           = string<br>    topics        = optional(list(string), [])<br>    collaborators = optional(map(string), {})<br>    admin_teams   = optional(list(string), [])<br>  })</pre> | n/a | yes |
-| <a name="input_public_repo"></a> [public\_repo](#input\_public_repo) | The public GitHub repository to import | <pre>object({<br>    clone_url      = string<br>    default_branch = string<br>  })</pre> | n/a | yes |
-| <a name="input_vulnerability_alerts"></a> [vulnerability\_alerts](#input\_vulnerability_alerts) | Enable GitHub vulnerability alerts | `bool` | `true` | no |
+| <a name="input_github_org_teams"></a> [github\_org\_teams](#input\_github\_org\_teams) | The GitHub organization teams to add to the repository | `list(any)` | `[]` | no |
+| <a name="input_github_repo_topics"></a> [github\_repo\_topics](#input\_github\_repo\_topics) | n/a | `list(string)` | `[]` | no |
+| <a name="input_internal_repo"></a> [internal\_repo](#input\_internal\_repo) | The internal GitHub repository to create | <pre>object({<br>    name          = string<br>    org           = string<br>    topics        = optional(list(string), [])<br>    collaborators = optional(map(string), {})<br>    admin_teams   = optional(list(string), [])<br>  })</pre> | n/a | yes |
+| <a name="input_public_repo"></a> [public\_repo](#input\_public\_repo) | The public GitHub repository to import | <pre>object({<br>    clone_url      = string<br>    default_branch = string<br>    name           = optional(string, null)<br>    org            = optional(string)<br>  })</pre> | n/a | yes |
+| <a name="input_source_default_branch"></a> [source\_default\_branch](#input\_source\_default\_branch) | n/a | `string` | `"main"` | no |
+| <a name="input_vulnerability_alerts"></a> [vulnerability\_alerts](#input\_vulnerability\_alerts) | Enable GitHub vulnerability alerts | `bool` | `true` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_internal_repo"></a> [internal\_repo](#output\_internal_repo) | n/a |
+| <a name="output_internal_repo"></a> [internal\_repo](#output\_internal\_repo) | n/a |
+| <a name="output_public_repo"></a> [public\_repo](#output\_public\_repo) | n/a |
 <!-- END_TF_DOCS -->

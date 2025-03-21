@@ -52,7 +52,6 @@ jobs:
           path: examples/.terraform.lock.hcl
      
   gtag:
-    needs: terraform-validate
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     uses: HappyPathway/centralized-actions/.github/workflows/gtag.yml@main
     with:

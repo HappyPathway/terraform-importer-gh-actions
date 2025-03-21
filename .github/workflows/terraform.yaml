@@ -19,6 +19,9 @@ jobs:
       commit_sha: ${{ steps.checkout.outputs.commit }}
         
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -39,18 +42,14 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           name: terraform_dir
-          path: .terraform
-          retention-days: 1
-          include-hidden-files: true
+          path: examples/.terraform
 
       - uses: actions/upload-artifact@master
         name: Archive Lockfile
         if: github.ref == 'refs/heads/main'
         with:
           name: terraform_lockfile
-          path: .terraform.lock.hcl
-          retention-days: 1
-          include-hidden-files: true
+          path: examples/.terraform.lock.hcl
           
   terraform-validate:
     needs: setup-terraform
@@ -63,7 +62,7 @@ jobs:
       github_org: ${{ github.repository_owner }}
       setup_terraform: true
       terraform_init: false
-      cache: ${{ github.workspace }}
+      cache: ${{ github.workspace }}/examples
       download_cache: true
       commit_sha: ${{ needs.setup-terraform.outputs.commit_sha }}
     secrets:

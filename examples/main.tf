@@ -13,30 +13,26 @@ module "gh_token" {
 }
 
 provider "github" {
-  alias = "public_repo"
   token = module.gh_token.value
-  owner = "HappyPathway"
-}
-
-provider "github" {
-  alias = "internal_repo"
-  token = module.gh_token.value
-  owner = "HappyPathway"
+  owner = "HappyPathway"  # Owner for the internal repository operations
 }
 
 module "repo_mirror" {
   source = "../"
+  
+  # Pass the GitHub token to the module
+  github_token = module.gh_token.value
+  
   public_repo = {
-    owner = "HappyPathway"
-    name  = "terraform-importer-gh-actions"
+    clone_url      = "https://github.com/HappyPathway/terraform-importer-gh-actions.git"
+    default_branch = "main"
   }
+  
   internal_repo = {
     name   = "terraform-import-gh-actions-internal"
     org    = "HappyPathway"
     topics = ["github-actions"]
   }
-  providers = {
-    github.public_repo   = github.public_repo
-    github.internal_repo = github.internal_repo
-  }
+  
+  # No need to pass providers anymore
 }

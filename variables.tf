@@ -12,11 +12,15 @@ variable "internal_repo" {
 variable "public_repo" {
   description = "The public GitHub repository to import"
   type = object({
-    clone_url      = string
-    default_branch = string
     name           = optional(string, null)
     org            = optional(string)
   })
+}
+
+variable "github_token" {
+  description = "GitHub token to use for accessing the public repository"
+  type        = string
+  sensitive   = true
 }
 
 variable "github_org_teams" {

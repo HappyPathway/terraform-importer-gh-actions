@@ -10,6 +10,14 @@ data "github_ref" "ref" {
   ref        = "heads/${data.github_repository.public_repo.default_branch != null ? data.github_repository.public_repo.default_branch : "main"}"
 }
 
+# Get all files from the source repository
+data "github_tree" "source_tree" {
+  provider   = github.public_repo
+  repository = var.public_repo.name
+  recursive  = true
+  tree_sha   = data.github_ref.ref.sha
+}
+
 module "internal_github_actions" {
   source                  = "HappyPathway/repo/github"
   github_repo_description = data.github_repository.public_repo.description
@@ -27,39 +35,37 @@ module "internal_github_actions" {
   create_codeowners = false
   enforce_prs       = false
   collaborators     = var.internal_repo.collaborators
-  # yes, this is a bug, but it's a bug in the module, not the code
-  admin_teams      = var.internal_repo.admin_teams
-  github_org_teams = var.github_org_teams
+  admin_teams       = var.internal_repo.admin_teams
+  github_org_teams  = var.github_org_teams
   providers = {
     github = github.internal_repo
   }
   vulnerability_alerts = var.vulnerability_alerts
 }
 
-resource "local_file" "script" {
-  filename = "${path.module}/import.sh"
-  content = templatefile("${path.module}/script.tpl", {
-    repo_path               = local.repo_path
-    public_clone_url        = data.github_repository.public_repo.http_clone_url
-    internal_clone_url      = module.internal_github_actions.github_repo.ssh_clone_url
-    internal_default_branch = module.internal_github_actions.github_repo.default_branch
-    public_default_branch   = data.github_repository.public_repo.default_branch
-    cur_dir                 = path.module
-  })
-  depends_on = [data.github_repository.public_repo]
+# Copy each file from source to destination
+resource "github_repository_file" "sync_files" {
+  provider = github.internal_repo
+  for_each = { for item in data.github_tree.source_tree.entries : item.path => item if item.type == "blob" }
+
+  repository          = module.internal_github_actions.github_repo.name
+  branch             = module.internal_github_actions.github_repo.default_branch
+  file               = each.value.path
+  content            = data.github_repository_file.source_files[each.key].content
+  commit_message     = "Sync from ${var.public_repo.owner}/${var.public_repo.name}"
+  commit_author      = "Terraform"
+  commit_email       = "terraform@example.com"
+  overwrite_on_create = true
 }
 
-resource "null_resource" "git_import" {
-
-  triggers = {
-    sha = data.github_ref.ref.sha
-  }
-
-  provisioner "local-exec" {
-    command = local_file.script.filename
-  }
-
-  depends_on = [local_file.script]
+# Get content of each file from source repository
+data "github_repository_file" "source_files" {
+  provider   = github.public_repo
+  for_each   = { for item in data.github_tree.source_tree.entries : item.path => item if item.type == "blob" }
+  
+  repository = var.public_repo.name
+  branch     = data.github_repository.public_repo.default_branch
+  file       = each.value.path
 }
 
 output "public_repo" {

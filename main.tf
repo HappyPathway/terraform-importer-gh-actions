@@ -1,34 +1,40 @@
-data "github_repository" "public_repo" {
-  provider  = github.public_repo
-  full_name = "${var.public_repo.org}/${var.public_repo.name}"
+# Use external data source to run the Python script
+data "external" "public_repo" {
+  program = [
+    "${path.module}/fetch_repo.py", 
+    "--org", var.public_repo.org,
+    "--name", var.public_repo.name, 
+    "--action", "repo"]
 }
 
-data "github_ref" "ref" {
-  provider   = github.public_repo
-  owner      = var.public_repo.org
-  repository = var.public_repo.name
-  ref        = "heads/${data.github_repository.public_repo.default_branch}"
+locals {
+  # Extract the default branch from the external data source output
+  default_branch = coalesce(var.public_repo.default_branch, data.external.public_repo.result.default_branch)
 }
 
-# Get all files from the source repository
-data "github_tree" "source_tree" {
-  provider   = github.public_repo
-  repository = var.public_repo.name
-  recursive  = true
-  tree_sha   = data.github_ref.ref.sha
+data "external" "branch_sha" {
+  program = ["${path.module}/fetch_repo.py", 
+  "--org", var.public_repo.org, 
+  "--name", var.public_repo.name, 
+  "--action", "tree", 
+  "--branch", local.default_branch]
+  depends_on = [data.external.public_repo]
+}
+
+# Extract file tree from the external data source output
+locals {
+  file_entries = jsondecode(jsonencode(data.external.branch_sha.result))
 }
 
 module "internal_github_actions" {
   source                  = "HappyPathway/repo/github"
-  github_repo_description = data.github_repository.public_repo.description
+  github_repo_description = data.external.public_repo.result.description
   repo_org                = var.internal_repo.org
   name                    = var.internal_repo.name
   github_repo_topics = concat([
     "github-actions"
     ],
-    data.github_repository.public_repo.topics != null ?
-    length(data.github_repository.public_repo.topics) > 0 ? data.github_repository.public_repo.topics : []
-    : []
+    try(jsondecode(jsonencode(data.external.public_repo.result.topics)), [])
   )
   force_name           = true
   github_is_private    = false
@@ -43,35 +49,37 @@ module "internal_github_actions" {
 }
 
 resource "terraform_data" "replacement" {
-  input = {
-    for item in data.github_tree.source_tree.entries : item.path => item if item.type == "blob"
-  }
+  input = { for item in local.file_entries : item.path => item if item.type == "blob" }
 }
 
 # Copy each file from source to destination
 resource "github_repository_file" "sync_files" {
-  for_each = { for item in data.github_tree.source_tree.entries : item.path => item if item.type == "blob" }
+  for_each = { for item in local.file_entries : item.path => item if item.type == "blob" }
 
   repository          = module.internal_github_actions.github_repo.name
-  branch             = module.internal_github_actions.github_repo.default_branch
-  file               = each.value.path
-  content            = data.github_repository_file.source_files[each.key].content
-  commit_message     = "Sync from ${var.public_repo.org}/${var.public_repo.name}"
-  commit_author      = "Terraform"
-  commit_email       = "terraform@example.com"
+  branch              = module.internal_github_actions.github_repo.default_branch
+  file                = each.value.path
+  commit_message      = "Sync from ${var.public_repo.org}/${var.public_repo.name}"
+  commit_author       = "Terraform"
+  commit_email        = "terraform@example.com"
   overwrite_on_create = true
-
+  content = base64decode(data.external.file_content[each.key].result.content)
   lifecycle {
     replace_triggered_by = [terraform_data.replacement]
   }
 }
 
-# Get content of each file from source repository
-data "github_repository_file" "source_files" {
-  provider   = github.public_repo
-  for_each   = { for item in data.github_tree.source_tree.entries : item.path => item if item.type == "blob" }
+# Get content of each file from source repository using Python script
+data "external" "file_content" {
+  for_each = { for item in local.file_entries : item.path => item if item.type == "blob" }
   
-  repository = var.public_repo.name
-  branch     = data.github_repository.public_repo.default_branch
-  file       = each.value.path
+  program = [
+    "${path.module}/fetch_repo.py", 
+    "--org", var.public_repo.org, 
+    "--name", var.public_repo.name, 
+    "--action", "file", 
+    "--path", each.key, 
+    "--branch", local.default_branch
+  ]
+  depends_on = [data.external.public_repo]
 }

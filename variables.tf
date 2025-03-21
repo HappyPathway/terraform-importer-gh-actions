@@ -22,6 +22,7 @@ variable "github_token" {
   description = "GitHub token to use for accessing the public repository"
   type        = string
   sensitive   = true
+  default     = null
 }
 
 variable "github_org_teams" {

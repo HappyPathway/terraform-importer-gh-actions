@@ -20,11 +20,9 @@ provider "github" {
 module "repo_mirror" {
   source = "../"
   
-  # Pass the GitHub token to the module
-  github_token = module.gh_token.value
-  
   public_repo = {
-    clone_url      = "https://github.com/HappyPathway/terraform-importer-gh-actions.git"
+    org            = "HappyPathway"
+    name           = "terraform-importer-gh-actions"
     default_branch = "main"
   }
   
@@ -33,6 +31,4 @@ module "repo_mirror" {
     org    = "HappyPathway"
     topics = ["github-actions"]
   }
-  
-  # No need to pass providers anymore
 }

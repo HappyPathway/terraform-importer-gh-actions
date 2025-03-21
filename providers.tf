@@ -1,9 +1,3 @@
-provider "github" {
-  alias = "public_repo"
-  token = var.github_token
-  owner = var.public_repo.org
-  base_url = var.public_repo.base_url
-}
-
-# The default provider (without alias) will be used for the internal repository operations
+# The default provider will be used for the internal repository operations
+# No longer defining a separate public_repo provider - we'll use the Python script instead
 

@@ -20,6 +20,7 @@ provider "github" {
 module "repo_mirror" {
   source = "../"
   
+  github_token = module.gh_token.value
   public_repo = {
     org            = "HappyPathway"
     name           = "terraform-importer-gh-actions"

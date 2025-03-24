@@ -15,6 +15,7 @@ variable "public_repo" {
     name           = optional(string, null)
     org            = optional(string)
     base_url       = optional(string, "https://github.com")
+    default_branch = optional(string, "main")
   })
 }
 
